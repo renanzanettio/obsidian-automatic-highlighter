@@ -24,17 +24,78 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 var import_obsidian = require("obsidian");
+
+// src/core/studyAnalyzer.ts
+var StudyAnalyzer = class {
+  analyze(content) {
+    const results = [];
+    const lines = content.split("\n");
+    let offset = 0;
+    for (const line of lines) {
+      let detectedType = null;
+      let start = offset;
+      let end = offset + line.length;
+      if (line.startsWith("### ")) {
+        detectedType = "title";
+      } else if (/^\d+\./.test(line.trim())) {
+        detectedType = "principle";
+      } else if (line.includes(" \xE9 ")) {
+        detectedType = "definition";
+      } else if (line.includes("visa") || line.includes("serve para") || line.includes("tem como objetivo")) {
+        detectedType = "purpose";
+      }
+      if (detectedType) {
+        results.push({
+          text: line,
+          start,
+          end,
+          type: detectedType
+        });
+      }
+      const acronymMatch = line.match(/\b[A-Z]{2,}\s*\([^)]+\)/);
+      if (acronymMatch) {
+        const index = line.indexOf(acronymMatch[0]);
+        results.push({
+          text: acronymMatch[0],
+          start: offset + index,
+          end: offset + index + acronymMatch[0].length,
+          type: "acronym"
+        });
+      }
+      offset += line.length + 1;
+    }
+    return results;
+  }
+};
+
+// src/main.ts
 var KeywordHighlighterPlugin = class extends import_obsidian.Plugin {
-  registerExtractKeywordsCommand() {
+  constructor() {
+    super(...arguments);
+    this.analyzer = new StudyAnalyzer();
+  }
+  registerAnalyzeCommand() {
     this.addCommand({
-      id: "extract-keywords",
-      name: "Extract Keywords",
-      callback: () => {
-        console.log("Extracting keywords from the current note...");
+      id: "analyze-note",
+      name: "Analyze Note for Important Content",
+      callback: async () => {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) {
+          new import_obsidian.Notice("No active file found!");
+          return;
+        }
+        const content = await this.app.vault.read(activeFile);
+        const highlights = this.analyzer.analyze(content);
+        if (highlights.length === 0) {
+          new import_obsidian.Notice("No important content detected.");
+          return;
+        }
+        console.log("Detected highlights:", highlights);
+        new import_obsidian.Notice(`Detected ${highlights.length} important sections.`);
       }
     });
   }
-  RegisterNotificationCommand() {
+  registerNotificationCommand() {
     this.addCommand({
       id: "show-notification",
       name: "Show Notification",
@@ -57,8 +118,8 @@ var KeywordHighlighterPlugin = class extends import_obsidian.Plugin {
   }
   async onload() {
     console.log("Loading Keyword Highlighter Plugin");
-    this.registerExtractKeywordsCommand();
-    this.RegisterNotificationCommand();
+    this.registerAnalyzeCommand();
+    this.registerNotificationCommand();
     this.registerReloadCommand();
   }
   onunload() {

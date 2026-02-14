@@ -1,9 +1,9 @@
 {
-  "id": "obsidian-keyword-highlighter",
-  "name": "Obsidian Keyword Highlighter",
+  "id": "automatic-highlighter",
+  "name": "Automatic Highlighter",
   "version": "0.0.1",
   "minAppVersion": "0.15.0",
-  "description": "Automatically extract and highlight meaningful keywords from your notes using a frequency-independent algorithm, with preview and save control.",
+  "description": "An unofficial extension for Obsidian that automatically detects and highlights key definitions, core concepts, and important explanations in study notes. Designed to help students quickly review essential information.",
   "author": "Renan Zanetti",
   "isDesktopOnly": false
 }

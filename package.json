@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-keyword-highlighter",
+  "name": "automatic-highlighter",
   "version": "1.0.0",
   "description": "Automatically extract and highlight meaningful keywords from your notes using a frequency-independent algorithm, with preview and save control.",
   "main": "index.js",
@@ -10,16 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/renanzanettio/Obsidian-Keyword-Highlighter.git"
+    "url": "git+https://github.com/renanzanettio/obsidian-automatic-highlighter.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Renan Zanetti",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/renanzanettio/Obsidian-Keyword-Highlighter/issues"
+    "url": "https://github.com/renanzanettio/obsidian-automatic-highlighter/issues"
   },
-  "homepage": "https://github.com/renanzanettio/Obsidian-Keyword-Highlighter#readme",
+  "homepage": "https://github.com/renanzanettio/obsidian-automatic-highlighter#readme",
   "dependencies": {
     "obsidian": "^1.12.0"
   },
