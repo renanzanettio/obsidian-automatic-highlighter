@@ -27,12 +27,30 @@ export default class KeywordHighlighterPlugin extends Plugin {
         
     }
 
+    private registerReloadCommand() {
+    this.addCommand({
+        id: 'reload-plugin',
+        name: 'Reload this plugin',
+        callback: async () => {
+            const id = this.manifest.id;
+
+            // @ts-ignore (internal API from Obsidian)
+            await this.app.plugins.disablePlugin(id);
+
+            // @ts-ignore (internal API from Obsidian)
+            await this.app.plugins.enablePlugin(id);
+            new Notice('Keyword Highlighter plugin reloaded!');
+        }
+    });
+}
+
     async onload() {
         // this is called when the plugin is loaded
         console.log('Loading Keyword Highlighter Plugin');
 
         this.registerExtractKeywordsCommand();
         this.RegisterNotificationCommand();
+        this.registerReloadCommand();
 
     }
 
