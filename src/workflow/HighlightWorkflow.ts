@@ -1,38 +1,22 @@
-import { App, Editor } from "obsidian";
-import { StudyAnalyzer } from "../analyzer/StudyAnalyzer";
-import { ConfirmHighlightModal } from "../modal/ConfirmHighlightModal";
-import { HighlightApplier } from "../applier/HighlightApplier";
+import { App, Editor } from 'obsidian';
+import { HighlightResult } from '../core/interfaces/HighlightResult';
 
 export class HighlightWorkflow {
+    constructor(private app: App) {}
 
-    private app: App;
-    private analyzer: StudyAnalyzer;
-    private applier: HighlightApplier;
+    // Adicione highlights como argumento opcional
+    run(editor: Editor, highlights: HighlightResult[]) {
+    if (!highlights || highlights.length === 0) return;
 
-    constructor(app: App) {
-        this.app = app;
-        this.analyzer = new StudyAnalyzer();
-        this.applier = new HighlightApplier();
-    }
+    // Ordena do maior start para o menor
+    const sorted = highlights.sort((a, b) => b.start - a.start);
 
-    run(editor: Editor) {
+    let text = editor.getValue();
 
-        const originalContent = editor.getValue();
-        const candidates = this.analyzer.analyze(originalContent);
+    sorted.forEach(h => {
+        text = text.slice(0, h.start) + `==${h.text}==` + text.slice(h.end);
+    });
 
-        if (candidates.length === 0) return;
-
-        this.applier.apply(editor, candidates);
-
-        new ConfirmHighlightModal(
-            this.app,
-            candidates.length,
-            () => {
-                // KEEP → não faz nada
-            },
-            () => {
-                editor.setValue(originalContent);
-            }
-        ).open();
-    }
+    editor.setValue(text);
+}
 }
