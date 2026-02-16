@@ -72,26 +72,44 @@ var GeminiAnalyzer = class {
   }
   buildPrompt(noteContent) {
     return `
-Voc\xEA \xE9 um assistente que extrai **apenas trechos curtos e significativos** de uma nota, \xFAteis para estudo (tipo flashcards).
+Voc\xEA \xE9 um assistente especializado em an\xE1lise de anota\xE7\xF5es acad\xEAmicas.
+
+Sua tarefa \xE9 extrair apenas trechos curtos, significativos e explicativos do texto, \xFAteis para estudo (como flashcards conceituais).
 
 Regras obrigat\xF3rias:
-1. Retorne **somente JSON v\xE1lido**, sem markdown, sem crases, sem t\xEDtulos, sem explica\xE7\xF5es.
-2. Cada item do array deve conter:
-   - "text": o trecho exato do texto
-   - "type": "definition", "concept" ou "important"
+1. Retorne SOMENTE JSON v\xE1lido.
+2. N\xC3O use markdown, crases, coment\xE1rios ou explica\xE7\xF5es.
+3. Retorne apenas um array JSON.
+4. Cada item deve conter:
+   - "text": trecho exato retirado do texto
+   - "type": um dos seguintes valores:
+        "definition"
+        "principle"
+        "concept"
+        "guideline"
+        "practice"
+        "value"
+        "metric"
+        "warning"
+        "classification"
    - "start": \xEDndice inicial
    - "end": \xEDndice final
-3. Ignore palavras isoladas ou frases triviais; pegue somente trechos relevantes e explicativos.
-4. **N\xC3O use markdown, crases, ou qualquer formata\xE7\xE3o**, apenas JSON puro.
-5. Retorne **SOMENTE um array JSON v\xE1lido**. Nada mais.
 
-Exemplo de sa\xEDda v\xE1lida:
-[
-  { "text": "O \xE1tomo \xE9 a unidade b\xE1sica da mat\xE9ria.", "type": "definition", "start": 0, "end": 38 },
-  { "text": "A fotoss\xEDntese converte luz em energia.", "type": "concept", "start": 50, "end": 90 }
-]
+Crit\xE9rios de classifica\xE7\xE3o:
+- Use "definition" quando houver explica\xE7\xE3o formal do que algo \xE9.
+- Use "principle" para regras centrais que orientam comportamento ou filosofia.
+- Use "practice" para a\xE7\xF5es recomendadas ou aplic\xE1veis.
+- Use "guideline" para orienta\xE7\xF5es gerais.
+- Use "value" para valores ou cultura.
+- Use "metric" quando indicar medida de progresso ou crit\xE9rio de avalia\xE7\xE3o.
+- Use "warning" quando indicar algo que n\xE3o deve ser feito ou risco.
+- Use "classification" quando dividir algo em tipos.
+- Use "concept" para ideias explicativas importantes.
 
-Texto da nota:
+Extraia apenas trechos que tenham significado completo.
+Ignore frases triviais, conectivos e repeti\xE7\xF5es.
+
+Texto:
 """
 ${noteContent}
 """

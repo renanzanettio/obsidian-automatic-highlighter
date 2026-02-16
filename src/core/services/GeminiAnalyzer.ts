@@ -27,26 +27,44 @@ export class GeminiAnalyzer implements NoteAnalyzer {
 
   private buildPrompt(noteContent: string): string {
     return `
-Você é um assistente que extrai **apenas trechos curtos e significativos** de uma nota, úteis para estudo (tipo flashcards).
+Você é um assistente especializado em análise de anotações acadêmicas.
+
+Sua tarefa é extrair apenas trechos curtos, significativos e explicativos do texto, úteis para estudo (como flashcards conceituais).
 
 Regras obrigatórias:
-1. Retorne **somente JSON válido**, sem markdown, sem crases, sem títulos, sem explicações.
-2. Cada item do array deve conter:
-   - "text": o trecho exato do texto
-   - "type": "definition", "concept" ou "important"
+1. Retorne SOMENTE JSON válido.
+2. NÃO use markdown, crases, comentários ou explicações.
+3. Retorne apenas um array JSON.
+4. Cada item deve conter:
+   - "text": trecho exato retirado do texto
+   - "type": um dos seguintes valores:
+        "definition"
+        "principle"
+        "concept"
+        "guideline"
+        "practice"
+        "value"
+        "metric"
+        "warning"
+        "classification"
    - "start": índice inicial
    - "end": índice final
-3. Ignore palavras isoladas ou frases triviais; pegue somente trechos relevantes e explicativos.
-4. **NÃO use markdown, crases, ou qualquer formatação**, apenas JSON puro.
-5. Retorne **SOMENTE um array JSON válido**. Nada mais.
 
-Exemplo de saída válida:
-[
-  { "text": "O átomo é a unidade básica da matéria.", "type": "definition", "start": 0, "end": 38 },
-  { "text": "A fotossíntese converte luz em energia.", "type": "concept", "start": 50, "end": 90 }
-]
+Critérios de classificação:
+- Use "definition" quando houver explicação formal do que algo é.
+- Use "principle" para regras centrais que orientam comportamento ou filosofia.
+- Use "practice" para ações recomendadas ou aplicáveis.
+- Use "guideline" para orientações gerais.
+- Use "value" para valores ou cultura.
+- Use "metric" quando indicar medida de progresso ou critério de avaliação.
+- Use "warning" quando indicar algo que não deve ser feito ou risco.
+- Use "classification" quando dividir algo em tipos.
+- Use "concept" para ideias explicativas importantes.
 
-Texto da nota:
+Extraia apenas trechos que tenham significado completo.
+Ignore frases triviais, conectivos e repetições.
+
+Texto:
 """
 ${noteContent}
 """
